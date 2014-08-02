@@ -178,6 +178,13 @@ struct android_pmem_platform_data
 	 * indicates that this region should be mapped/unmaped as needed
 	 */
 	int map_on_demand;
+
+#ifdef CONFIG_ANDROID_PMEM_ION_WRAPPER
+	/*
+	 * ion heap id
+	 */
+	unsigned int ion_heap_id;
+#endif
 };
 
 int pmem_setup(struct android_pmem_platform_data *pdata,
