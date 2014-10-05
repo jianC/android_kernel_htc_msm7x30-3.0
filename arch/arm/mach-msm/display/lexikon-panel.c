@@ -31,7 +31,6 @@
 #include <mach/vreg.h>
 #include <mach/panel_id.h>
 
-//#include "pmic.h"
 #include "../board-lexikon.h"
 #include "../devices.h"
 #include "../proc_comm.h"
@@ -45,7 +44,6 @@
 extern int panel_type;
 
 #define DRIVER_IC_CUT2			4
-#define PANEL_WHITESTONE		0
 #define PANEL_LEXIKON_SHARP		1
 #define PANEL_LEXIKON_SONY		2
 #define PANEL_LEXIKON_SHARP_CUT2        (PANEL_LEXIKON_SHARP | DRIVER_IC_CUT2)
@@ -212,146 +210,11 @@ static struct resource resources_msm_fb[] = {
 
 #define REG_WAIT (0xffff)
 
-static struct nov_regs {
+struct nov_regs {
 	unsigned reg;
 	unsigned val;
-} nov_init_seq[] = {
-	{0xc000, 0x86},
-	{0xc001, 0x00},
-	{0xc002, 0x86},
-	{0xc003, 0x00},
-	{0xc100, 0x40},
-	{0xc200, 0x02},
-	{0xc202, 0x32},
-	{0xe000, 0x0e},
-	{0xe001, 0x2a},
-	{0xe002, 0x33},
-	{0xe003, 0x38},
-	{0xe004, 0x1e},
-	{0xe005, 0x30},
-	{0xe006, 0x64},
-	{0xe007, 0x3f},
-	{0xe008, 0x21},
-	{0xe009, 0x27},
-	{0xe00a, 0x88},
-	{0xe00b, 0x14},
-	{0xe00c, 0x35},
-	{0xe00d, 0x56},
-	{0xe00e, 0x79},
-	{0xe00f, 0x88},
-	{0xe010, 0x55},
-	{0xe011, 0x57},
-	{0xe100, 0x0e},
-	{0xe101, 0x2a},
-	{0xe102, 0x33},
-	{0xe103, 0x3b},
-	{0xe104, 0x1e},
-	{0xe105, 0x30},
-	{0xe106, 0x64},
-	{0xe107, 0x3f},
-	{0xe108, 0x21},
-	{0xe109, 0x27},
-	{0xe10a, 0x88},
-	{0xe10b, 0x14},
-	{0xe10c, 0x35},
-	{0xe10d, 0x56},
-	{0xe10e, 0x79},
-	{0xe10f, 0x88},
-	{0xe110, 0x55},
-	{0xe111, 0x57},
-
-	{0xe200, 0x0E},
-	{0xe201, 0x2A},
-	{0xe202, 0x33},
-	{0xe203, 0x3B},
-	{0xe204, 0x1e},
-	{0xe205, 0x30},
-	{0xe206, 0x64},
-	{0xe207, 0x3F},
-	{0xe208, 0x21},
-	{0xe209, 0x27},
-	{0xe20A, 0x88},
-	{0xe20B, 0x14},
-	{0xe20C, 0x35},
-	{0xe20D, 0x56},
-	{0xe20E, 0x79},
-	{0xe20F, 0xB8},
-	{0xe210, 0x55},
-	{0xe211, 0x57},
-
-	{0xe300, 0x0E},
-	{0xe301, 0x2A},
-	{0xe302, 0x33},
-	{0xe303, 0x3B},
-	{0xe304, 0x1E},
-	{0xe305, 0x30},
-	{0xe306, 0x64},
-	{0xe307, 0x3F},
-	{0xe308, 0x21},
-	{0xe309, 0x27},
-	{0xe30A, 0x88},
-	{0xe30B, 0x14},
-	{0xe30C, 0x35},
-	{0xe30D, 0x56},
-	{0xe30E, 0x79},
-	{0xe30F, 0xB8},
-	{0xe310, 0x55},
-	{0xe311, 0x57},
-	{0xe400, 0x0E},
-	{0xe401, 0x2A},
-	{0xe402, 0x33},
-	{0xe403, 0x3B},
-	{0xe404, 0x1E},
-	{0xe405, 0x30},
-	{0xe406, 0x64},
-	{0xe407, 0x3F},
-	{0xe408, 0x21},
-	{0xe409, 0x27},
-	{0xe40A, 0x88},
-	{0xe40B, 0x14},
-	{0xe40C, 0x35},
-	{0xe40D, 0x56},
-	{0xe40E, 0x79},
-	{0xe40F, 0xB8},
-	{0xe410, 0x55},
-	{0xe411, 0x57},
-	{0xe500, 0x0E},
-	{0xe501, 0x2A},
-	{0xe502, 0x33},
-	{0xe503, 0x3B},
-	{0xe504, 0x1E},
-	{0xe505, 0x30},
-	{0xe506, 0x64},
-	{0xe507, 0x3F},
-	{0xe508, 0x21},
-	{0xe509, 0x27},
-	{0xe50A, 0x88},
-	{0xe50B, 0x14},
-	{0xe50C, 0x35},
-	{0xe50D, 0x56},
-	{0xe50E, 0x79},
-	{0xe50F, 0xB8},
-	{0xe510, 0x55},
-	{0xe511, 0x57},
-
-	{0x3a00, 0x05},
-
-	/* cabc */
-	{0x4e00, 0x00},
-	{0x5e00, 0x00},
-	{0x6a01, 0x00},
-	{0x6a02, 0x01},
-	{0x5100, 0xff},
-	{0x5301, 0x10},
-	{0x6A18, 0xff},
-	{0x6A17, 0x01},
-
-	{0x3500, 0x00},
-	{0x1100, 0x0},
-	{REG_WAIT, 120},
-	{0x2900, 0x0},
-	{REG_WAIT, 100},
 };
+
 static struct nov_regs sharp_init_seq[] = {
 	{0x1100, 0x00},
 	{REG_WAIT, 120},
@@ -658,10 +521,7 @@ lexikon_mddi_init(struct msm_mddi_bridge_platform_data *bridge_data,
 	unsigned reg, val;
 	struct nov_regs *init_seq;
 
-	if (panel_type == PANEL_WHITESTONE) {
-		init_seq = nov_init_seq;
-		array_size = ARRAY_SIZE(nov_init_seq);
-	} else if (panel_type == PANEL_LEXIKON_SONY
+    if (panel_type == PANEL_LEXIKON_SONY
 		|| panel_type == PANEL_LEXIKON_SONY_CUT2) {
 		init_seq = sony_init_seq;
 		array_size = ARRAY_SIZE(sony_init_seq);
@@ -747,59 +607,39 @@ mddi_novatec_power(struct msm_mddi_client_data *client_data, int on)
 	unsigned config;
 	B(KERN_DEBUG "%s(%d)\n", __func__, __LINE__);
 
-	if (panel_type == 0) {
-		if (on) {
-			if(axi_clk)
-				clk_set_rate(axi_clk, 192000000);
-			vreg_enable(V_LCM_2V85);
-			vreg_enable(V_LCMIO_1V8);
-			hr_msleep(20);
-			gpio_set_value(LEXIKON_LCD_RSTz, 1);
-			hr_msleep(25);
-			gpio_set_value(LEXIKON_LCD_RSTz, 0);
-			hr_msleep(10);
-			gpio_set_value(LEXIKON_LCD_RSTz, 1);
-			hr_msleep(20);
-		} else {
-			vreg_disable(V_LCMIO_1V8);
-			vreg_disable(V_LCM_2V85);
-			gpio_set_value(LEXIKON_LCD_RSTz, 0);
-		}
+	if (on) {
+		if(axi_clk)
+			clk_set_rate(axi_clk, 192000000);
+		vreg_enable(V_LCM_2V85);
+		hr_msleep(3);
+		vreg_disable(V_LCM_2V85);
+		hr_msleep(50);
+		vreg_enable(V_LCM_2V85);
+		vreg_enable(V_LCMIO_1V8);
+		hr_msleep(2);
+		gpio_set_value(LEXIKON_LCD_RSTz, 1);
+		hr_msleep(1);
+		gpio_set_value(LEXIKON_LCD_RSTz, 0);
+		hr_msleep(1);
+		gpio_set_value(LEXIKON_LCD_RSTz, 1);
+		hr_msleep(60);
+		config = PCOM_GPIO_CFG(LEXIKON_MDDI_TE, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA);
+		rc = msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &config, 0);
+		config = PCOM_GPIO_CFG(LEXIKON_LCD_ID1, 1, GPIO_INPUT, GPIO_NO_PULL, GPIO_2MA);
+		rc = msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &config, 0);
+		config = PCOM_GPIO_CFG(LEXIKON_LCD_ID0, 1, GPIO_INPUT, GPIO_NO_PULL, GPIO_2MA);
+		rc = msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &config, 0);
 	} else {
-		if (on) {
-			if(axi_clk)
-				clk_set_rate(axi_clk, 192000000);
-			vreg_enable(V_LCM_2V85);
-			hr_msleep(3);
-			vreg_disable(V_LCM_2V85);
-			hr_msleep(50);
-			vreg_enable(V_LCM_2V85);
-			vreg_enable(V_LCMIO_1V8);
-			hr_msleep(2);
-			gpio_set_value(LEXIKON_LCD_RSTz, 1);
-			hr_msleep(1);
-			gpio_set_value(LEXIKON_LCD_RSTz, 0);
-			hr_msleep(1);
-			gpio_set_value(LEXIKON_LCD_RSTz, 1);
-			hr_msleep(60);
-			config = PCOM_GPIO_CFG(LEXIKON_MDDI_TE, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA);
-			rc = msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &config, 0);
-			config = PCOM_GPIO_CFG(LEXIKON_LCD_ID1, 1, GPIO_INPUT, GPIO_NO_PULL, GPIO_2MA);
-			rc = msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &config, 0);
-			config = PCOM_GPIO_CFG(LEXIKON_LCD_ID0, 1, GPIO_INPUT, GPIO_NO_PULL, GPIO_2MA);
-			rc = msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &config, 0);
-		} else {
-			config = PCOM_GPIO_CFG(LEXIKON_MDDI_TE, 0, GPIO_OUTPUT, GPIO_PULL_DOWN, GPIO_2MA);
-			rc = msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &config, 0);
-			config = PCOM_GPIO_CFG(LEXIKON_LCD_ID1, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA);
-			rc = msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &config, 0);
-			config = PCOM_GPIO_CFG(LEXIKON_LCD_ID0, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA);
-			rc = msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &config, 0);
-			gpio_set_value(LEXIKON_LCD_RSTz, 0);
-			hr_msleep(10);
-			vreg_disable(V_LCMIO_1V8);
-			vreg_disable(V_LCM_2V85);
-		}
+		config = PCOM_GPIO_CFG(LEXIKON_MDDI_TE, 0, GPIO_OUTPUT, GPIO_PULL_DOWN, GPIO_2MA);
+		rc = msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &config, 0);
+		config = PCOM_GPIO_CFG(LEXIKON_LCD_ID1, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA);
+		rc = msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &config, 0);
+		config = PCOM_GPIO_CFG(LEXIKON_LCD_ID0, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA);
+		rc = msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &config, 0);
+		gpio_set_value(LEXIKON_LCD_RSTz, 0);
+		hr_msleep(10);
+		vreg_disable(V_LCMIO_1V8);
+		vreg_disable(V_LCM_2V85);
 	}
 }
 
@@ -861,39 +701,6 @@ int __init lexikon_init_panel(unsigned int sys_rev)
 	int rc;
 
 	B(KERN_INFO "%s: enter.\n", __func__);
-	
-	resources_msm_fb[0].start = msm_fb_base;
-	resources_msm_fb[0].end = msm_fb_base + MSM_FB_SIZE - 1;	
-
-	msm_device_mdp.dev.platform_data = &mdp_pdata;
-	rc = platform_device_register(&msm_device_mdp);
-	if (rc)
-		return rc;
-
-	if (panel_type == 0) {
-		mddi_pdata.clk_rate = 384000000;
-		mddi_pdata.type = MSM_MDP_MDDI_TYPE_I;
-	} else {
-		if (panel_type & DRIVER_IC_CUT2)
-			mddi_pdata.clk_rate = 384000000;
-		else
-			mddi_pdata.clk_rate = 256000000;
-		mddi_pdata.type = MSM_MDP_MDDI_TYPE_II;
-	}
-	axi_clk = clk_get(NULL, "ebi1_mddi_clk");
-	if (IS_ERR(axi_clk)) {
-		pr_err("%s: failed to get axi clock\n", __func__);
-		return PTR_ERR(axi_clk);
-	}
-
-	msm_device_mddi0.dev.platform_data = &mddi_pdata;
-	rc = platform_device_register(&msm_device_mddi0);
-	if (rc)
-		return rc;
-
-	rc = platform_driver_register(&lexikon_backlight_driver);
-	if (rc)
-		return rc;
 
 	/* lcd panel power */
 	/* 2.85V -- LDO20 */
@@ -914,6 +721,36 @@ int __init lexikon_init_panel(unsigned int sys_rev)
 		       __func__, PTR_ERR(V_LCMIO_1V8));
 		return -1;
 	}
+	
+	resources_msm_fb[0].start = msm_fb_base;
+	resources_msm_fb[0].end = msm_fb_base + MSM_FB_SIZE - 1;	
+
+	msm_device_mdp.dev.platform_data = &mdp_pdata;
+	rc = platform_device_register(&msm_device_mdp);
+	if (rc)
+		return rc;
+
+	if (panel_type & DRIVER_IC_CUT2)
+		mddi_pdata.clk_rate = 384000000;
+	else
+		mddi_pdata.clk_rate = 256000000;
+
+	mddi_pdata.type = MSM_MDP_MDDI_TYPE_II;
+
+	axi_clk = clk_get(NULL, "ebi1_mddi_clk");
+	if (IS_ERR(axi_clk)) {
+		pr_err("%s: failed to get axi clock\n", __func__);
+		return PTR_ERR(axi_clk);
+	}
+
+	msm_device_mddi0.dev.platform_data = &mddi_pdata;
+	rc = platform_device_register(&msm_device_mddi0);
+	if (rc)
+		return rc;
+
+	rc = platform_driver_register(&lexikon_backlight_driver);
+	if (rc)
+		return rc;
 
 	return 0;
 }
