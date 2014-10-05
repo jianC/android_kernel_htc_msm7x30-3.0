@@ -556,6 +556,11 @@ config BOSCH_BMA150
           If you say yes here you get support for Bosch Sensortec's
           acceleration sensors SMB380/BMA150.
 
+config LIGHTSENSOR_SMD
+        tristate "LIGHTSENSOR SMD Driver"
+        help
+          HTC LIGHTSENSOR SMD support.
+
 config LIGHTSENSOR_MICROP
         tristate "LIGHTSENSOR MICROP Driver"
         depends on MICROP_COMMON
