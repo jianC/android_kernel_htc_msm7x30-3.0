@@ -481,7 +481,7 @@ endif
 obj-$(CONFIG_MACH_SPEEDY) += board-speedy-mmc.o
 obj-$(CONFIG_MACH_SPEEDY) += display/speedy-panel.o
 obj-$(CONFIG_MACH_SPEEDY) += htc_bdaddress.o board-speedy-rfkill.o
-obj-$(CONFIG_MACH_LEXIKON) += board-lexikon.o board-lexikon-microp.o 
+obj-$(CONFIG_MACH_LEXIKON) += board-lexikon.o
 obj-$(CONFIG_MACH_LEXIKON) += board-lexikon-keypad.o board-lexikon-audio.o
 obj-$(CONFIG_MACH_LEXIKON) += board-lexikon-mmc.o
 obj-$(CONFIG_MACH_LEXIKON) += display/lexikon-panel.o

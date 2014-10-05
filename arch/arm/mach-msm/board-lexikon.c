@@ -33,7 +33,6 @@
 #include <linux/input.h>
 #include <linux/atmel_qt602240.h>
 #include <linux/synaptics_i2c_rmi.h>
-#include <mach/atmega_microp.h>
 #include <linux/akm8975.h>
 #include <linux/bma150.h>
 #include <linux/power_supply.h>
@@ -453,14 +452,6 @@ static struct platform_device htc_headset_mgr = {
 
 /* HEADSET DRIVER END */
 
-static struct microp_i2c_platform_data microp_data_XA = {
-	.gpio_reset = LEXIKON_GPIO_UP_RESET_N,
-};
-
-static struct microp_i2c_platform_data microp_data_XB = {
-	.gpio_reset = PM8058_GPIO_PM_TO_SYS(LEXIKON_GPIO_uP_RST_XB),
-};
-
 static struct akm8975_platform_data compass_platform_data = {
 	.layouts = LEXIKON_LAYOUTS,
 };
@@ -471,11 +462,6 @@ static struct bma150_platform_data gsensor_platform_data = {
 };
 
 static struct i2c_board_info i2c_Sensors_devicesXA[] = {
-	{
-		I2C_BOARD_INFO(MICROP_I2C_NAME, 0xCC >> 1),
-		.platform_data = &microp_data_XA,
-		.irq = MSM_GPIO_TO_INT(LEXIKON_GPIO_UP_INT_N),
-	},
 	{
 		I2C_BOARD_INFO(AKM8975_I2C_NAME, 0x1A >> 1),
 		.platform_data = &compass_platform_data,
@@ -489,11 +475,6 @@ static struct i2c_board_info i2c_Sensors_devicesXA[] = {
 };
 
 static struct i2c_board_info i2c_Sensors_devicesXB[] = {
-	{
-		I2C_BOARD_INFO(MICROP_I2C_NAME, 0xCC >> 1),
-		.platform_data = &microp_data_XB,
-		.irq = MSM_GPIO_TO_INT(LEXIKON_GPIO_UP_INT_N),
-	},
 	{
 		I2C_BOARD_INFO(AKM8975_I2C_NAME, 0x1A >> 1),
 		.platform_data = &compass_platform_data,
@@ -667,19 +648,6 @@ static int pm8058_gpios_init(void)
 		}
 	};
 
-	struct pm8xxx_gpio_init_info microp_gpio = {
-		PM8058_GPIO_PM_TO_SYS(LEXIKON_GPIO_uP_RST_XB),
-		{
-			.direction      = PM_GPIO_DIR_OUT,
-			.output_buffer  = PM_GPIO_OUT_BUF_CMOS,
-			.output_value   = 0,
-			.pull           = PM_GPIO_PULL_NO,
-			.vin_sel        = PM8058_GPIO_VIN_L5,
-			.out_strength   = PM_GPIO_STRENGTH_HIGH,
-			.function       = PM_GPIO_FUNC_NORMAL,
-		}
-	};
-
 #ifdef CONFIG_MMC_MSM_CARD_HW_DETECTION
 	struct pm8xxx_gpio_init_info sdcc_det = {
 		PM8058_GPIO_PM_TO_SYS(LEXIKON_GPIO_SDMC_CD_N),
@@ -789,15 +757,6 @@ static int pm8058_gpios_init(void)
 			return rc;
 		} else
 			pr_info("%s [BMA150] LEXIKON_GPIO_GSENSOR_INT_N_XB config ok\n",
-					__func__);
-
-		/* uP Reset */
-		rc = pm8xxx_gpio_config(microp_gpio.gpio, &microp_gpio.config);
-		if (rc) {
-			pr_err("%s LEXIKON_GPIO_uP_RST_XB config failed\n", __func__);
-			return rc;
-		} else
-			pr_info("%s [MICROP] LEXIKON_GPIO_uP_RST_XB config ok\n",
 					__func__);
 	}
 
@@ -3045,9 +3004,6 @@ static void __init lexikon_init(void)
 	aux_pcm_gpio_init();
 	msm_snddev_init();
 	lexikon_audio_init();
-#endif
-#ifdef CONFIG_MICROP_COMMON
-	lexikon_microp_init();
 #endif
 	i2c_register_board_info(0, i2c_ts_devices,
 			ARRAY_SIZE(i2c_ts_devices));
